@@ -26,6 +26,7 @@ class BurgerBuilder extends Component {
   };
 
   componentDidMount () {
+    console.log(this.props);
     axios.get('https://burgerapp-d11a6.firebaseio.com/ingredients.json')
       .then(res => {
         this.setState({ingredients: res.data});
@@ -83,28 +84,38 @@ class BurgerBuilder extends Component {
 
   purchaseContinueHandler = () => {
     // alert('You Continue!');
-    this.setState({loading: true});
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'Nikita',
-        address: {
-          street: 'TestStreet 1',
-          zipCode: '111222',
-          country: 'Russia'
-        },
-        email: 'test@test.com',
-      },
-      deliveryMethod: 'fastest'
+    // this.setState({loading: true});
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: 'Nikita',
+    //     address: {
+    //       street: 'TestStreet 1',
+    //       zipCode: '111222',
+    //       country: 'Russia'
+    //     },
+    //     email: 'test@test.com',
+    //   },
+    //   deliveryMethod: 'fastest'
+    // }
+    // axios.post('/orders.json', order)
+    //   .then(res => {
+    //     this.setState({loading: false, purchasing: false});
+    //   })
+    //   .catch(err => {
+    //     this.setState({loading: false, purchasing: false});
+    //   });
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(`${encodeURIComponent(i)}=${encodeURIComponent(this.state.ingredients[i])}`);
     }
-    axios.post('/orders.json', order)
-      .then(res => {
-        this.setState({loading: false, purchasing: false});
-      })
-      .catch(err => {
-        this.setState({loading: false, purchasing: false});
-      });
+    const queryString = queryParams.join('&');
+
+    this.props.history.push({
+      pathname: '/checkout',
+      search: `?${queryString}`
+    });
   }
 
   render() {
